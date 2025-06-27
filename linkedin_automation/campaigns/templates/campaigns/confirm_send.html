@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Sending Invites</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"  rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/">LinkedIn Auto</a>
+        <div class="ms-auto d-flex align-items-center">
+            {% if user.is_authenticated %}
+                <span class="text-white me-3">Hello, {{ user.username }}</span>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-light">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-4">
+    <h2 class="mb-4">Send Connection Requests</h2>
+
+    <p class="lead mb-4">Are you sure you want to send invites to all these people?</p>
+
+    <ul class="list-group mb-4">
+        {% for profile in profiles %}
+            <li class="list-group-item">
+                <a href="{{ profile.url }}" target="_blank">{{ profile.url }}</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">No profiles found to send invites to.</li>
+        {% endfor %}
+    </ul>
+
+    <form method="post" action="{% url 'campaigns:run_automation' %}">
+        {% csrf_token %}
+        <input type="hidden" name="confirmed" value="true">
+
+        <button type="submit" class="btn btn-success">Yes, Send Invites</button>
+        <a href="{% url 'campaigns:domain_input' %}" class="btn btn-secondary">Go Back</a>
+    </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
+
+</body>
+</html>
